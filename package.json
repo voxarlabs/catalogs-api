@@ -1,0 +1,10 @@
+{
+  "name": "catalogs-api",
+  "description": "Use data from Google Spreadsheets with ease.",
+  "version": "0.0.1",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-concat": "^0.5.1",
+    "grunt-contrib-watch": "^0.6.1",
+  }
+}

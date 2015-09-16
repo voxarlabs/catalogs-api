@@ -1,0 +1,14 @@
+{
+  "name": "catalogs-api",
+  "description": "Use data from Google Spreadsheets with ease.",
+  "version": "0.0.1",
+  "homepage": "https://github.com/voxarlabs/catalogs-api",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "angular": "~1.4.5"
+  },
+  "resolutions": {
+    "angular": "~1.4.5"
+  }
+}

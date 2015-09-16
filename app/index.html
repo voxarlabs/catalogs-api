@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en" ng-app="spreadsheetApp">
+<head>
+  <meta charset="utf-8">
+  <title>Spreadsheet Sample</title>
+
+  <!-- CSS -->
+  <!-- build:css(app) css/style.css -->
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <!-- endbuild -->
+
+  <!-- Javascript (dependencies) -->
+  <!-- build:js(app) app.js -->
+  <script type="text/javascript" src="bower_components/angular/angular.js"></script>
+  <script type="text/javascript" src="bower_components/angular-route/angular-route.js"></script>
+  <script type="text/javascript" src="bower_components/angular-resource/angular-resource.js"></script>
+  <script type="text/javascript" src="bower_components/tabletop/src/tabletop.js"></script>
+  <script type="text/javascript" src="bower_components/angular-filter/dist/angular-filter.min.js"></script>
+  <script type="text/javascript" src="bower_components/angular-resource/angular-resource.min.js"></script>
+  <script type="text/javascript" src="bower_components/angular-microtext/angular-microtext.js"></script>
+
+  <!-- Javascript (application) -->
+  <script type="text/javascript" src="js/utils.js"></script>
+  <script type="text/javascript" src="js/app.js"></script>
+  <script type="text/javascript" src="js/services.js"></script>
+  <script type="text/javascript" src="js/controllers.js"></script>
+  <script type="text/javascript" src="js/filters.js"></script>
+  <script type="text/javascript" src="js/directives.js"></script>
+  <!-- endbuild -->
+
+  <script type="text/javascript">
+  $(document).ready(function(){
+
+    $('.filter-header a').click(function(e){
+      $(this).closest('.filter').toggleClass('visible');
+      e.preventDefault();
+    });
+
+  })
+  </script>
+
+</head>
+<body ng-controller="ItemsListCtrl" bs-breakpoint>
+
+  <div class="container-fluid">
+
+    <header class="row">
+      <div class="col-sm-4 col-md-4">
+        <a href="" ui-sref="cards" id="logo">
+          <img src="img/gc_logo.png" />
+        </a>
+      </div>
+
+      <div class="col-sm-8 col-md-offset-3 col-md-5">
+        <nav>
+          <li>
+            <a href="#" data-toggle="modal" data-target="#about-modal">ABOUT</a>
+          </li>
+          <li id="voxar">
+            <a href="http://cin.ufpe.br/~voxarlabs"> <img src="img/voxar.png" /> </a>
+          </li>
+        </nav>
+      </div>
+    </header>
+
+    <div id="loading-wrapper">
+
+      <div id="pre-content" class="row">
+        <div id="filters" class="col-sm-4 col-md-3 col-xl-2">
+          <h1>FILTERS</h1>
+
+          <a id="hide-sidebar" href="" ng-click="showSidebar=!showSidebar; $broadcast('masonry.reload');" tooltip="Toggle sidebar visibility">
+            <svg
+              ng-class="{'hide-sidebar-down': showSidebar, 'hide-sidebar-up': !showSidebar}" 
+              width="30px" height="30px" viewBox="0 0 70 90" xml:space="preserve">
+              <polyline fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" points="45.63,80.8 0.375,43.087 45.63,5.375 "/>
+            </svg>
+          </a>
+
+          <a id="clear-filters" href="" ng-click="clearFilter()" tooltip="Reset all the filters">
+            <img src="img/clear_icon.png" />
+            <span>CLEAR</span>
+          </a>
+
+        </div>
+
+        <div id="result-data" class="col-sm-8 col-md-9 col-xl-10 hidden-xs">
+          <h1 class="pull-left"><strong>{{ filteredItems.length }}</strong> gestures found</h1>
+
+          <a class="btn add-scene pull-right" href="https://docs.google.com/forms/d/1DqBlTkFc5RmVDhTK2LMGpvujqYZWEt61eq0hdxrXrdY/viewform">Add a scene</a>
+        </div>
+      </div> <!-- End Content -->
+
+      <div id="content" class="row">
+
+        <div id="sidebar" class="col-sm-4 col-md-3 col-xl-2" ng-animate=" 'animate' " ng-show="showSidebar">
+
+          <div class="filter" ng-class="{'visible' : f.filterable}" ng-repeat="f in schemaList | filter: {visibility:true}">
+
+            <div class="filter-header">
+                <h2>
+                  <a href="" filter-drawer ng-if="f.filterable" tooltip="Click to show filtering options">
+                    <span class="filter-name">{{ f.name | uppercase }}</span>
+                  </a>
+                  <a href="" ng-if="!f.filterable" ng-class="{'filter-simple': !f.filterable}">
+                    <span class="filter-name">{{ f.name | uppercase }}</span>
+                  </a>
+                </h2>
+            </div>
+            
+            <div class="filter-content" ng-if="f.filterable">
+              <input ng-if="f.filter.input == 'text-field'" ng-change="doFilter()" type="text" ng-model="criteria[f.field]" placeholder="{{ f.filter.placeholder }}" ng-model-options="{ debounce: 250 }" />
+
+              <ui-select multiple ng-if="f.filter.input == 'select'" ng-change="doFilter()"
+                  ng-model="criteria[f.field]" 
+                  title="f.placeholder" 
+                  append-to-body="true">
+                <ui-select-match placeholder="{{ f.filter.placeholder }}">{{$item}}</ui-select-match>
+                <ui-select-choices repeat="opt in f.filter.options | filter:$select.search">
+                  {{ opt }}
+                </ui-select-choices>
+              </ui-select>
+
+              <ui-select multiple tagging
+                  ng-if="f.filter.input == 'tag'" 
+                  ng-change="doFilter()" 
+                  tagging-label="" 
+                  ng-model="criteria[f.field]" 
+                  title="f.placeholder"
+                  append-to-body="true"
+                  style="top: 5px !important;">
+                <ui-select-match placeholder="{{ f.filter.placeholder }}">
+                  {{$item}}
+                </ui-select-match>
+                <ui-select-choices repeat="opt in f.filter.options | filter:$select.search">
+                  {{ opt }}
+                </ui-select-choices>
+              </ui-select>
+
+
+              <ul class="checkbox-list" ng-if="f.filter.input == 'checkbox'">
+                <li ng-repeat="opt in f.filter.options">
+                  <input checklist-change="doFilter()" type="checkbox" checklist-model="criteria[f.field]" checklist-value="opt"  id="{{ f.field }}-{{ opt }}" />
+                  <label for="{{ f.field }}-{{ opt }}" class="checkbox-label"> {{ opt }} </label>
+                </li>
+              </ul>
+
+            </div>
+
+          </div> <!-- End Filter -->
+
+        </div> <!-- End Sidebar -->
+
+        <div id="results" ng-class="{'col-sm-8 col-md-9 col-xl-10': showSidebar, 'col-md-12 col-xl-12': !showSidebar, 'sidebar-visible': showSidebar}">
+
+          <div id="result-data-small" class="hidden-sm hidden-md hidden-lg">
+            <h1 class="pull-left"><strong>{{ filteredItems.length }}</strong> gestures found</h1>
+
+            <a class="btn add-scene pull-right" href="#">Add a scene</a>
+          </div>
+
+          <div id="results-utils">
+            <div id="results-sorting">
+              <div class="dropdown">
+                Sorted by
+                
+                <a href="#" data-toggle="dropdown">
+                  <strong>{{ sorting.name | capitalize }}</strong>
+                  <span class="caret"></span>
+                </a>
+
+                <ul class="dropdown-menu">
+
+                  <li ng-repeat="f in schemaList | filter: {sortable:true}">
+                    <a ng-click="doSort(f['field'])">{{ f.name | capitalize }}</a>
+                  </li>
+                  
+                </ul>
+              </div>
+
+              <div class="dropdown" style="margin-left: 10px;">
+                in
+                
+                <a href="#" data-toggle="dropdown">
+                  <strong ng-if="sortingReverse">Descending</strong>
+                  <strong ng-if="!sortingReverse">Ascending</strong>
+                  <span class="caret"></span>
+                </a>
+
+                order
+
+                <ul class="dropdown-menu">
+
+                  <li>
+                    <a ng-click="setSortReverse(false)">Ascending</a>
+                  </li>
+                  <li>
+                    <a ng-click="setSortReverse(true)">Descending</a>
+                  </li>
+                  
+                </ul>
+              </div>
+
+              <br style="clearfix" />
+            </div>
+
+            <div id="results-display">
+              Displaying as
+              <a tooltip="Cards" ui-sref="cards" ui-sref-active="active"><span class="glyphicon glyphicon-th"></span></a>
+              <a tooltip="Table" ui-sref="table" ui-sref-active="active"><span class="glyphicon glyphicon-list"></span></a>
+            </div>
+
+            <div class="clearfix"></div>
+
+          </div> <!-- End Results utils -->
+
+          <div id="results-container" get-width ng-model="resultsWidth">
+
+            <div ui-view="results"></div>
+
+            <pagination class="hidden-xs"
+              max-size="15"
+              ng-model="currentPage"
+              items-per-page="itemsPerPage"
+              total-items="filteredItems.length"></pagination>
+
+             <pager class="visible-xs" total-items="filteredItems.length" ng-model="currentPage"></pager>
+
+             <div class="clearfix"></div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="modal fade" id="about-modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" ng-include="'partials/about.html'">
+      
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
