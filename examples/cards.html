@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <title>Spreadsheet Sample</title>
 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.5/angular-filter.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.4.2/tabletop.min.js"></script>
@@ -26,6 +28,13 @@
 	<div 
 		ng-repeat="item in pageItems"
 		style="width: 18%; height: 400px; overflow: scroll; overflow-x: hidden; float:left; margin: 1%; padding: 20px; background: #f4f4f4">
+
+    <youtube-video 
+      ng-repeat="(field, value) in item" 
+      ng-if="schema[field].video" video-id="value"
+      width="'300px'" height="'200px'">
+    </youtube-video>
+
 		<strong>{{ item.movie }}</strong> <!-- You can access attributes directly -->
 		<p ng-repeat="attribute in item"> {{ attribute | joinBy: ', ' }}</p> <!-- You can access all attributes -->
 	</div>
