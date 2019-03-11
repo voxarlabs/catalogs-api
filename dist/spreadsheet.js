@@ -252,6 +252,7 @@ function parseSchema(name, str, data){
 		sortable: false,
 		title: false,
 		video: false,
+		image: false,
 		separator: null,
 		filter: {
 			placeholder: name,
@@ -303,6 +304,11 @@ function parseSchema(name, str, data){
 
 		if(s.indexOf("Video") > -1){
 			schema['video'] = true;
+			continue;
+		}
+
+		if(s.indexOf("Image") > -1){
+			schema['image'] = true;
 			continue;
 		}
 
