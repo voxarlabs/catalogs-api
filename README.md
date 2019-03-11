@@ -18,17 +18,19 @@ Import Google Spreadsheet data into your website with ease.
 
 ### Configuring your Spreadsheet
 1. Open your spreadsheet and go to File > Publish on the web. Then make sure "Whole document" is checked and click the **Publish** button.
-2. See the demo sheet (https://docs.google.com/spreadsheets/d/10r4epKXxm4XcaJ4kdD6etpsrfQB8HSctG8wz-Qf_w_Y/edit#gid=2018434422) to see how to configure your columns.
+2. See the demo sheet (https://docs.google.com/spreadsheets/d/13SVee7vyZ1xoxhrQCosEn1QvQ-bhbn1zubZZWS-EkmI/edit#gid=2018434422) to see how to configure your columns.
 
 
-**Check the examples folder to learn more**
+## Examples
+Check the `examples/` folder to see two sample apps using the Catalogs API:
+1. `cards.html`: Simple cards with videos, images, and text.
+2. `cards_with_filters.html`: Cards with videos, text, and filtering options.
 
 ### Development
 Clone the repository, use node and bower to install the dependencies and then initialize grunt.
 
     $ git clone https://github.com/voxarlabs/catalogs-api.git
     $ cd catalogs-api
-    $ node install
+    $ npm install
     $ bower install
     $ grunt watch
-
