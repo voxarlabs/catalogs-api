@@ -1,6 +1,8 @@
 # Catalogs API
 Import Google Spreadsheet data into your website with ease.
 
+![Catalogs API Application](docs/coverImage.png)
+
 
 ## Usage
 ### Configuring your webpage
